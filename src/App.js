@@ -9,6 +9,7 @@ class App extends Component {
   render() {
     return (
       <div >
+    {/* TODO: Delete this comment later */}
         <Layout>
           <Switch>
          <Route path="/checkout" component={Checkout} />
