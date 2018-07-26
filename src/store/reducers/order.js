@@ -9,7 +9,7 @@ const purchaseInit = (state, action) => {
     return updateObject(state, { purchased: false });
 };
 const purchaseBurgerStart = (state, action) => {
-    return updateObject(state, { loading: true });
+    return updateObject(state, { loading: true  });
 };
 const purchaseburgerSuccess = (state, action) => {
     const newOrder = updateObject(action.orderData, { id: action.orderId });

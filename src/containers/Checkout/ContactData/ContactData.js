@@ -7,6 +7,7 @@ import classes from './ContactData.css';
 import axios from '../../../axios-orders';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import * as actions from '../../../store/actions/index';
+import {checkValidity} from '../../../shared/utility';
 class ContactData extends Component {
     state = {
         orderForm:{
@@ -47,6 +48,7 @@ class ContactData extends Component {
                     required: true,
                     minLength: 5,
                     maxLength: 5,
+                    isNumeric: true,
                 },
                 valid: false,
                 touched: false,
@@ -93,22 +95,7 @@ class ContactData extends Component {
         formIsValid: false,
       //  loading: false,
     }
-    checkValidity(value, rules){
-        let isValid = true;
-        if(!rules){
-            return true;
-        }
-        if(rules.required){
-            isValid = value.trim() !=='' && isValid;
-        }
-        if(rules.minLength){
-            isValid = value.length >= rules.minLength && isValid;
-        }
-        if(rules.maxLength){
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-        return isValid;
-    }
+    
     orderHandler = (event)=>{
         event.preventDefault();
         
@@ -123,8 +110,9 @@ class ContactData extends Component {
             ingredients: this.props.ings,
             price: this.props.price,
             orderData: formData,
+            userId: this.props.userId,
         };
-        this.props.onOrderBurger(order);
+        this.props.onOrderBurger(order, this.props.token);
       //  axios.post('/orders.json',order)
       //  .then(response=>{
       //     this.setState({loading:false});
@@ -141,7 +129,7 @@ class ContactData extends Component {
             ...updatedOrderForm[inputIdentifier]
         };
         updatedFormElement.value = event.target.value;
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        updatedFormElement.valid = checkValidity(updatedFormElement.value, updatedFormElement.validation);
         updatedFormElement.touched = true;
         updatedOrderForm[inputIdentifier] = updatedFormElement;
         //console.log(updatedFormElement);
@@ -194,12 +182,14 @@ const mapStateToProps = state => {
         ings: state.burgerBuilder.ingredients,
         price: state.burgerBuilder.totalPrice,
         loading: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId,
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData))
+        onOrderBurger: (orderData, token) => dispatch(actions.purchaseBurger(orderData, token))
     }
 }
 
